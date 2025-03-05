@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { ArrowBackOutlined } from "@mui/icons-material";
 
 const Add = ({ addDoctor }) => {
   const theme = useTheme();
@@ -35,12 +36,15 @@ const Add = ({ addDoctor }) => {
       nom: data.nom,
       prenom: data.prenom,
       pb: data.pb,
+      age: data.age,
       numero_Tele: data.numero_Tele,
       email: data.email,
       adress: data.adress,
+      statut: data.statut,
       departement: data.departement,
       gender: data.gender,
       salary: data.salary,
+      cv: data.cv ? data.cv[0].name : null, // Assuming cv is a file input
       image: data.image ? data.image[0].name : null, // Assuming image is a file input
     };
 
@@ -56,7 +60,7 @@ const Add = ({ addDoctor }) => {
       // Wait for a brief moment before navigating
       const timer = setTimeout(() => {
         navigate("/doctors");
-      }, 1000);
+      }, 600);
 
       // Cleanup the timer on component unmount
       return () => clearTimeout(timer);
@@ -66,6 +70,7 @@ const Add = ({ addDoctor }) => {
   return (
     <Paper
       sx={{
+        position: "relative",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -76,6 +81,30 @@ const Add = ({ addDoctor }) => {
         color: theme.palette.grey[100],
       }}
     >
+      <Button
+        sx={{
+          display: "flex",
+          justifyContent: "start",
+          fontSize: "26px",
+          position: "absolute",
+          top: "5px",
+          left: "5px",
+          width: "40px",
+          height: "60px",
+          textAlign: "center",
+          lineHeight: "40px",
+          borderRadius: "50%",
+          overflow: "hidden",
+          pl: "20px",
+        }}
+        onClick={() =>
+          setTimeout(() => {
+            navigate("/doctors");
+          }, 700)
+        }
+      >
+        <ArrowBackOutlined />
+      </Button>
       <Typography variant="h2" sx={{ textTransform: "capitalize", pt: "20px" }}>
         Ajouter un nouveau médecin
       </Typography>
@@ -104,7 +133,7 @@ const Add = ({ addDoctor }) => {
           }}
         >
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="ID*"
             variant="outlined"
             error={Boolean(errors.id)}
@@ -113,7 +142,7 @@ const Add = ({ addDoctor }) => {
           />
 
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="Nom*"
             variant="outlined"
             error={Boolean(errors.nom)}
@@ -122,7 +151,7 @@ const Add = ({ addDoctor }) => {
           />
 
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="Prénom*"
             variant="outlined"
             error={Boolean(errors.prenom)}
@@ -131,7 +160,7 @@ const Add = ({ addDoctor }) => {
           />
 
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="Email*"
             variant="outlined"
             error={Boolean(errors.email)}
@@ -140,7 +169,7 @@ const Add = ({ addDoctor }) => {
           />
 
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="N° Téléphone*"
             variant="outlined"
             error={Boolean(errors.numero_Tele)}
@@ -149,7 +178,7 @@ const Add = ({ addDoctor }) => {
           />
 
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="CIN*"
             variant="outlined"
             error={Boolean(errors.pb)}
@@ -158,12 +187,21 @@ const Add = ({ addDoctor }) => {
           />
 
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
-            label="Âge"
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
+            label="Age*"
             variant="outlined"
             error={Boolean(errors.age)}
             helperText={errors.age ? "Ce champ est obligatoire" : null}
-            {...register("age", { required: false })}
+            {...register("age", { required: true })}
+          />
+
+          <TextField
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
+            label="statut*"
+            variant="outlined"
+            error={Boolean(errors.statut)}
+            helperText={errors.statut ? "Ce champ est obligatoire" : null}
+            {...register("statut", { required: true })}
           />
 
           {/* Sélecteur de genre */}
@@ -184,7 +222,7 @@ const Add = ({ addDoctor }) => {
 
           {/* Champ d'adresse */}
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="Adresse"
             variant="outlined"
             error={Boolean(errors.adress)}
@@ -194,7 +232,7 @@ const Add = ({ addDoctor }) => {
 
           {/* Champ de salaire */}
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="salary"
             variant="outlined"
             error={Boolean(errors.salary)}
@@ -225,9 +263,9 @@ const Add = ({ addDoctor }) => {
 
           {/* Champ de téléchargement d'image */}
           <TextField
-            sx={{ width: "48%", minWidth: "400px", flexGrow: 1 }}
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             type="file"
-            {...register("image")}
+            {...register("image", { required: true })}
             InputLabelProps={{
               shrink: true,
             }}
@@ -236,6 +274,27 @@ const Add = ({ addDoctor }) => {
             label="Photo"
             error={Boolean(errors.image)}
             helperText={errors.image ? "Ce champ est obligatoire" : null}
+          />
+
+          <TextField
+            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
+            type="file"
+            {...register("cv", {
+              required: "Ce champ est obligatoire",
+              validate: {
+                isPdf: (value) =>
+                  value[0]?.type === "application/pdf" ||
+                  "Veuillez télécharger un fichier PDF",
+              },
+            })}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            fullWidth
+            variant="outlined"
+            label="Fichier PDF"
+            error={Boolean(errors.cv)}
+            helperText={errors.cv ? errors.pdfFile.message : null}
           />
         </Stack>
 

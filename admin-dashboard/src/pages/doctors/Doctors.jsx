@@ -1,4 +1,6 @@
-import React from "react";
+// doctors.jsx
+
+import React, { useEffect, useState } from "react";
 // @ts-ignore
 import { Button, Stack, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -40,11 +42,21 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const Doctors = ({ doctorsData, deleteDoctor }) => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const [isDelete, setIsDelete] = useState(false);
 
   // Function to handle doctor deletion
+
   const handleDelete = (id) => {
     deleteDoctor(id); // Call deleteDoctor passed as prop
+    setIsDelete(true);
   };
+
+  useEffect(() => {
+    console.log("Navigating to /doctors");
+    navigate("/doctors");
+  }, [isDelete]);
+
+  console.log(doctorsData);
 
   return (
     <>
@@ -78,9 +90,9 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
               <StyledTableCell align="center">PB</StyledTableCell>
               <StyledTableCell align="center">N° Téléphone</StyledTableCell>
               <StyledTableCell align="center">Email</StyledTableCell>
+              <StyledTableCell align="center">Age</StyledTableCell>
               <StyledTableCell align="center">Adresse</StyledTableCell>
               <StyledTableCell align="center">Département</StyledTableCell>
-              <StyledTableCell align="center">Salaire</StyledTableCell>
               <StyledTableCell align="center">Opérations</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -96,19 +108,20 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
                     {row.numero_Tele}
                   </StyledTableCell>
                   <StyledTableCell align="center">{row.email}</StyledTableCell>
+                  <StyledTableCell align="center">{row.age}</StyledTableCell>
                   <StyledTableCell align="center">{row.adress}</StyledTableCell>
                   <StyledTableCell align="center">
                     {row.departement}
                   </StyledTableCell>
-                  <StyledTableCell align="center">{row.salary}</StyledTableCell>
                   <StyledTableCell align="center">
-                    <Button onClick={() => navigate("/detail")}>
-                      <RemoveRedEyeOutlined
-                        sx={{ color: theme.palette.info.light }}
-                      />
+                    <Button
+                      onClick={() => navigate(`/detail/${row.id}`)}
+                      sx={{ color: theme.palette.info.light }}
+                    >
+                      <RemoveRedEyeOutlined />
                     </Button>
 
-                    <Button>
+                    <Button onClick={() => navigate(`/update/${row.id}`)}>
                       <BorderColorOutlined
                         sx={{ color: theme.palette.success.light }}
                       />
