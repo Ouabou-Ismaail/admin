@@ -93,12 +93,12 @@ const SlidBar = ({ open, handleDrawerClose }) => {
     {
       text: "autres employes",
       icon: <GroupAddOutlined />,
-      path: "/autres_employes",
+      path: "/infermiers",
     },
     {
-      text: "patientes",
+      text: "patients",
       icon: <AccessibleOutlined />,
-      path: "/patientes",
+      path: "/patients",
     },
     {
       text: "departements",

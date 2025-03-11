@@ -1,3 +1,5 @@
+// Add.jsx
+
 import {
   Button,
   FormControl,
@@ -10,62 +12,162 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ArrowBackOutlined } from "@mui/icons-material";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { PickersDay } from "@mui/x-date-pickers/PickersDay";
+import EditCalendarRoundedIcon from "@mui/icons-material/EditCalendarRounded";
+import { styled } from "@mui/material/styles";
+import IconButton from "@mui/material/IconButton";
+import dayjs, { Dayjs } from "dayjs";
 
-const Add = ({ addDoctor }) => {
+const StyledButton = styled(IconButton)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+}));
+
+const StyledDay = styled(PickersDay)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+  color: theme.palette.secondary.light,
+  ...theme.applyStyles("light", {
+    color: theme.palette.secondary.dark,
+  }),
+}));
+
+const Add = ({ addDoctor, addInfermier, addPatient, doctorsData }) => {
+  let doctorsName = [];
+
+  doctorsData.forEach((doctor) => {
+    doctorsName.push(`${doctor.nom} ${doctor.prenom}`);
+  });
+
+  const [idDoctor, setIdDoctor] = useState(
+    JSON.parse(localStorage.getItem("idDoctor")) || 0
+  );
+  const [idInfermier, setIdInfermier] = useState(
+    JSON.parse(localStorage.getItem("idInfermier")) || 0
+  );
+  const [idPatient, setIdPatient] = useState(
+    JSON.parse(localStorage.getItem("idPatient")) || 0
+  );
+
   const theme = useTheme();
+  const { category } = useParams();
+  const navigate = useNavigate();
 
-  // Utilisation de react-hook-form pour l'état du formulaire
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const navigate = useNavigate();
+  const [isDoctorAdded, setIsDoctorAdded] = useState(false);
+  const [isInfermierAdded, setIsInfermierAdded] = useState(false);
+  const [isPatientAdded, setIsPatientAdded] = useState(false);
 
-  const [isDoctorAdded, setIsDoctorAdded] = useState(false); // Track doctor addition
+  // Initialize rendezVous state with a valid dayjs object
+  const [rendezVous, setRendezVous] = useState(dayjs());
+  const [formattedDate, setFormattedDate] = useState(
+    dayjs().format("DD/MM/YYYY")
+  );
 
-  // Fonction de soumission du formulaire
-  const onSubmit = (data) => {
-    const newDoctor = {
-      id: data.id,
-      nom: data.nom,
-      prenom: data.prenom,
-      pb: data.pb,
-      age: data.age,
-      numero_Tele: data.numero_Tele,
-      email: data.email,
-      adress: data.adress,
-      statut: data.statut,
-      departement: data.departement,
-      gender: data.gender,
-      salary: data.salary,
-      cv: data.cv ? data.cv[0].name : null, // Assuming cv is a file input
-      image: data.image ? data.image[0].name : null, // Assuming image is a file input
-    };
-
-    // Appeler la fonction addDoctor pour ajouter le médecin
-    addDoctor(newDoctor);
-    console.log(newDoctor); // Afficher le nouveau médecin dans la console (facultatif)
-    setIsDoctorAdded(true);
+  // Handle date change by ensuring the passed date is a valid dayjs object
+  const handleDateChange = (newDate) => {
+    const validDate = dayjs(newDate); // Convert to dayjs object
+    if (validDate.isValid()) {
+      setRendezVous(validDate);
+      setFormattedDate(validDate.format("DD/MM/YYYY")); // Update the formatted date for display
+    }
   };
 
-  // UseEffect to handle navigation after doctor is added
-  useEffect(() => {
-    if (isDoctorAdded) {
-      // Wait for a brief moment before navigating
-      const timer = setTimeout(() => {
-        navigate("/doctors");
-      }, 600);
+  const onSubmit = (data) => {
+    let newObject;
+    if (category === "patients") {
+      newObject = {
+        id: getId(category),
+        nom: data.nom,
+        prenom: data.prenom,
+        pb: data.pb,
+        age: data.age,
+        numero_Tele: data.numero_Tele,
+        email: data.email,
+        rendezVous: rendezVous.format("DD/MM/YYYY") || null,
+        adress: data.adress,
+        doctor_traitant: data.doctor_traitant,
+        statut: data.statut,
+        gender: data.gender,
+        image: data.image && data.image[0] ? data.image[0].name : null,
+      };
+    } else {
+      newObject = {
+        id: getId(category),
+        nom: data.nom,
+        prenom: data.prenom,
+        pb: data.pb,
+        age: data.age,
+        numero_Tele: data.numero_Tele,
+        email: data.email,
+        adress: data.adress,
+        statut: data.statut,
+        departement: data.departement,
+        gender: data.gender,
+        salary: data.salary,
+        cv: data.cv && data.cv[0] ? data.cv[0].name : null,
+        image: data.image && data.image[0] ? data.image[0].name : null,
+      };
+    }
 
-      // Cleanup the timer on component unmount
+    console.log(rendezVous.format("DD/MM/YYYY"));
+
+    if (category === "doctors") {
+      addDoctor(newObject);
+      setIdDoctor(idDoctor);
+      setIsDoctorAdded(true);
+      console.log("Doctor added successfully");
+    } else if (category === "infermiers") {
+      addInfermier(newObject);
+      setIdInfermier(idInfermier);
+      setIsInfermierAdded(true);
+      console.log("Infermier added successfully");
+    } else if (category === "patients") {
+      addPatient(newObject);
+      setIdPatient(idPatient);
+      setIsPatientAdded(true);
+      console.log("Patient added successfully");
+    }
+
+    if (category === "doctors") {
+      localStorage.setItem("idDoctor", JSON.stringify(idDoctor + 1));
+    } else if (category === "infermiers") {
+      localStorage.setItem("idInfermier", JSON.stringify(idInfermier + 1));
+    } else if (category === "patients") {
+      localStorage.setItem("idPatient", JSON.stringify(idPatient + 1));
+    }
+  };
+
+  const getId = (category) => {
+    if (category === "doctors") {
+      return idDoctor + 1;
+    } else if (category === "infermiers") {
+      return idInfermier + 1;
+    } else if (category === "patients") {
+      return idPatient + 1;
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (isDoctorAdded || isInfermierAdded || isPatientAdded) {
+      const timer = setTimeout(() => {
+        navigate(`/${category}`);
+      }, 400);
       return () => clearTimeout(timer);
     }
-  }, [isDoctorAdded, navigate]);
+  }, [isDoctorAdded, isInfermierAdded, isPatientAdded, navigate]);
 
   return (
     <Paper
@@ -99,15 +201,25 @@ const Add = ({ addDoctor }) => {
         }}
         onClick={() =>
           setTimeout(() => {
-            navigate("/doctors");
-          }, 700)
+            navigate(`/${category}`);
+          }, 500)
         }
       >
         <ArrowBackOutlined />
       </Button>
-      <Typography variant="h2" sx={{ textTransform: "capitalize", pt: "20px" }}>
-        Ajouter un nouveau médecin
+      <Typography
+        variant="h1"
+        sx={{
+          textTransform: "capitalize",
+          pt: "20px",
+          fontWeight: "900",
+          fontSize: "35px",
+        }}
+      >
+        Ajouter un nouveau {category.substring(0, category.length - 1)}{" "}
+        {/* Removing the last character */}
       </Typography>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         style={{
@@ -135,10 +247,16 @@ const Add = ({ addDoctor }) => {
           <TextField
             sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             label="ID*"
+            value={
+              category === "doctors"
+                ? idDoctor + 1
+                : category === "infermiers"
+                ? idInfermier + 1
+                : idPatient + 1
+            } // Afficher l'ID mis à jour
             variant="outlined"
-            error={Boolean(errors.id)}
-            helperText={errors.id ? "Ce champ est obligatoire" : null}
             {...register("id", { required: true })}
+            disabled
           />
 
           <TextField
@@ -195,14 +313,21 @@ const Add = ({ addDoctor }) => {
             {...register("age", { required: true })}
           />
 
-          <TextField
-            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
-            label="statut*"
-            variant="outlined"
-            error={Boolean(errors.statut)}
-            helperText={errors.statut ? "Ce champ est obligatoire" : null}
-            {...register("statut", { required: true })}
-          />
+          {/* Sélecteur de genre */}
+          <FormControl sx={{ minWidth: "400px", width: "49%", flexGrow: 1 }}>
+            <InputLabel>statut*</InputLabel>
+            <Select
+              {...register("statut", { required: true })}
+              label="statut"
+              error={Boolean(errors.statut)}
+            >
+              <MenuItem value="homme">married</MenuItem>
+              <MenuItem value="femme">single</MenuItem>
+            </Select>
+            {errors.gender && (
+              <Typography color="error">Ce champ est obligatoire</Typography>
+            )}
+          </FormControl>
 
           {/* Sélecteur de genre */}
           <FormControl sx={{ minWidth: "400px", width: "49%", flexGrow: 1 }}>
@@ -230,80 +355,148 @@ const Add = ({ addDoctor }) => {
             {...register("adress", { required: true })}
           />
 
+          {/* Champ de doctor traitant */}
+          {category === "patients" ? (
+            <FormControl sx={{ minWidth: "400px", width: "49%", flexGrow: 1 }}>
+              <InputLabel>Doctor Traitants</InputLabel>
+              <Select
+                {...register("doctor_traitant", { required: false })}
+                label="Doctor Traitants"
+                error={Boolean(errors.doctor_traitant)}
+              >
+                {doctorsName.map((doctor) => (
+                  <MenuItem key={doctor} value={doctor}>
+                    {doctor}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors.doctor_traitant && (
+                <Typography color="error">Ce champ est obligatoire</Typography>
+              )}
+            </FormControl>
+          ) : null}
+
           {/* Champ de salaire */}
-          <TextField
-            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
-            label="salary"
-            variant="outlined"
-            error={Boolean(errors.salary)}
-            helperText={errors.salary ? "Ce champ est obligatoire" : null}
-            {...register("salary", { required: true })}
-          />
+          {category === "doctors" || category === "infermiers" ? (
+            <TextField
+              sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
+              label="salary"
+              variant="outlined"
+              error={Boolean(errors.salary)}
+              helperText={errors.salary ? "Ce champ est obligatoire" : null}
+              {...register("salary", { required: true })}
+            />
+          ) : null}
 
           {/* Sélecteur de département */}
-          <FormControl sx={{ minWidth: "400px", width: "49%", flexGrow: 1 }}>
-            <InputLabel>Département</InputLabel>
-            <Select
-              {...register("departement", { required: true })}
-              label="Département"
-              error={Boolean(errors.departement)}
-            >
-              <MenuItem value="Gynécologie_Obstétrique">
-                Gynécologie et Obstétrique
-              </MenuItem>
-              <MenuItem value="Pédiatrie">Pédiatrie</MenuItem>
-              <MenuItem value="Urgences">Urgences</MenuItem>
-              <MenuItem value="Chirurgie">Chirurgie</MenuItem>
-              <MenuItem value="Cardiologie">Cardiologie</MenuItem>
-            </Select>
-            {errors.departement && (
-              <Typography color="error">Ce champ est obligatoire</Typography>
-            )}
-          </FormControl>
+          {category === "doctors" || category === "infermiers" ? (
+            <FormControl sx={{ minWidth: "400px", width: "49%", flexGrow: 1 }}>
+              <InputLabel>Département</InputLabel>
+              <Select
+                {...register("departement", { required: true })}
+                label="Département"
+                error={Boolean(errors.departement)}
+              >
+                <MenuItem value="Gynécologie_Obstétrique">
+                  Gynécologie et Obstétrique
+                </MenuItem>
+                <MenuItem value="Pédiatrie">Pédiatrie</MenuItem>
+                <MenuItem value="Urgences">Urgences</MenuItem>
+                <MenuItem value="Chirurgie">Chirurgie</MenuItem>
+                <MenuItem value="Cardiologie">Cardiologie</MenuItem>
+              </Select>
+              {errors.departement && (
+                <Typography color="error">Ce champ est obligatoire</Typography>
+              )}
+            </FormControl>
+          ) : null}
 
-          {/* Champ de téléchargement d'image */}
+          {category === "patients" ? (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Stack sx={{ width: "49%", minWidth: "460px", flexGrow: 1 }}>
+                <DatePicker
+                  sx={{ width: "100%" }}
+                  label="Date de Rendez-vous"
+                  value={rendezVous} // Directly use rendezVous without validity check
+                  onChange={(newDate) => handleDateChange(newDate)}
+                  // @ts-ignore
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      value={formattedDate} // Display the formatted date
+                      variant="outlined"
+                      focused={false}
+                      color="secondary"
+                    />
+                  )}
+                  slots={{
+                    openPickerIcon: EditCalendarRoundedIcon, // Custom picker icon
+                    openPickerButton: StyledButton, // Custom button for the picker
+                  }}
+                  slotProps={{
+                    openPickerIcon: { fontSize: "large" },
+                    openPickerButton: { color: "secondary" },
+                    textField: {
+                      variant: "outlined",
+                      focused: false,
+                      color: "secondary",
+                    },
+                  }}
+                />
+              </Stack>
+            </LocalizationProvider>
+          ) : null}
+
           <TextField
             sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
             type="file"
-            {...register("image", { required: true })}
-            InputLabelProps={{
-              shrink: true,
-            }}
             fullWidth
             variant="outlined"
             label="Photo"
             error={Boolean(errors.image)}
             helperText={errors.image ? "Ce champ est obligatoire" : null}
-          />
-
-          <TextField
-            sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
-            type="file"
-            {...register("cv", {
-              required: "Ce champ est obligatoire",
-              validate: {
-                isPdf: (value) =>
-                  value[0]?.type === "application/pdf" ||
-                  "Veuillez télécharger un fichier PDF",
+            {...register("image", {
+              validate: (value) => {
+                // Only validate if a file is selected
+                if (value && value.length > 0) {
+                  return true; // File selected, validation passes
+                }
+                return true; // No file selected, validation passes (not required)
               },
             })}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            fullWidth
-            variant="outlined"
-            label="Fichier PDF"
-            error={Boolean(errors.cv)}
-            helperText={errors.cv ? errors.pdfFile.message : null}
           />
+
+          {category === "doctors" || category === "infermiers" ? (
+            <TextField
+              sx={{ width: "49%", minWidth: "400px", flexGrow: 1 }}
+              type="file"
+              fullWidth
+              variant="outlined"
+              label="Fichier PDF"
+              error={Boolean(errors.cv)}
+              {...register("cv", {
+                validate: (value) => {
+                  // Only validate if a file is selected
+                  if (value && value.length > 0) {
+                    // Check if it's a PDF if a file is selected
+                    return (
+                      value[0]?.type === "application/pdf" ||
+                      "Veuillez télécharger un fichier PDF"
+                    );
+                  }
+                  return true; // No file selected, validation passes (not required)
+                },
+              })}
+            />
+          ) : null}
         </Stack>
 
         <Button
           type="submit"
           variant="contained"
-          sx={{ p: "4px 25px", textTransform: "capitalize", fontSize: "22px" }}
+          sx={{ marginTop: "20px", p: "10px 30px", fontSize: "18px" }}
         >
-          Ajouter un médecin
+          Ajouter
         </Button>
       </form>
     </Paper>
