@@ -6,7 +6,7 @@ import VaccinesOutlined from "@mui/icons-material/VaccinesOutlined";
 import { styled, useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 
-const Dashboard = ({ doctorsData }) => {
+const Dashboard = ({ doctorsData, infermiersData, patientsData }) => {
   const theme = useTheme();
 
   const navigate = useNavigate();
@@ -17,30 +17,30 @@ const Dashboard = ({ doctorsData }) => {
       number: doctorsData.length,
       path: "/doctors",
       icon: "/images/doctor.png",
-
-      color: theme.palette.info.light,
     },
     {
       category: "total infermiers",
-      number: 33,
+      number: infermiersData.length,
       path: "/infermiers",
       icon: "/images/infermiere.png",
-      color: theme.palette.info.light,
+    },
+    {
+      category: "total patients",
+      number: patientsData.length,
+      path: "/patients",
+      icon: "/images/patient.png",
     },
     {
       category: "total departements",
-      number: 5,
+      number: 0,
       path: "/departements",
       icon: "/images/departement.png",
-
-      color: theme.palette.info.light,
     },
     {
       category: "total lits",
-      number: 40,
+      number: 0,
       path: "/lits",
       icon: "/images/lit.png",
-      color: theme.palette.info.light,
     },
   ];
 
@@ -66,20 +66,32 @@ const Dashboard = ({ doctorsData }) => {
             textDecoration: "none",
             p: "34px",
             borderRadius: "12px",
+            flexGrow: 1,
           }}
           elevation={4}
         >
-          <Box sx={{ textAlign: "center" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "start",
+              alignItems: "start",
+              gap: "10px",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
-                mx: "auto",
-                width: "90px",
-                height: "90px",
+                width: "100px",
+                height: "100px",
               }}
             >
-              <img style={{ width: "100%", height: "100%" }} src={item.icon} />
+              <img
+                style={{ width: "100%", height: "100%", color: "white" }}
+                src={item.icon}
+              />
             </Box>
+
             <Typography
               sx={{
                 fontSize: "30px",
@@ -89,12 +101,16 @@ const Dashboard = ({ doctorsData }) => {
                 ":hover": {
                   scale: "1.02",
                 },
+                // @ts-ignore
+                color: theme.palette.info.light,
               }}
             >
               {item.category}
             </Typography>
 
-            <Typography sx={{ fontSize: "30px" }}>{item.number}</Typography>
+            <Typography sx={{ fontSize: "30px", ml: "12px" }}>
+              {item.number}
+            </Typography>
           </Box>
 
           <Button

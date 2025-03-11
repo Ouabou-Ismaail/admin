@@ -44,24 +44,26 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const Doctors = ({ doctorsData, deleteDoctor }) => {
-  const category = "doctors";
+const Infermiers = ({ infermiersData, deleteInfermier }) => {
+  const category = "infermiers";
+
   const theme = useTheme();
   const navigate = useNavigate();
-  const [isDelete, setIsDelete] = useState(false);
+  const [isInfermierDelete, setIsInfermierDelete] = useState(false);
 
-  // Function to handle doctor deletion
-  const handleDelete = (id) => {
-    setIsDelete(true);
+  // Function to handle infermier deletion
+  const handleDeleteInf = (ID) => {
+    setIsInfermierDelete(true);
 
-    deleteDoctor(id);
+    deleteInfermier(ID);
   };
 
   useEffect(() => {
-    if (isDelete) {
-      navigate("/doctors"); // Navigate after deletion
+    if (isInfermierDelete) {
+      navigate("/infermiers"); // Navigate after deletion
+      console.log("infermier deleted");
     }
-  }, [isDelete, navigate]);
+  }, [isInfermierDelete, navigate]);
 
   return (
     <>
@@ -74,18 +76,18 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
           p: "30px",
         }}
       >
-        <Typography variant="h1">Liste des Doctors</Typography>
+        <Typography variant="h1">Liste des Infermiers</Typography>
         <Button
           onClick={() => navigate(`/add/${category}`)} // Redirect to Add page
           sx={{
             p: "12px 18px",
             display: "flex",
             gap: "12px",
-            bgcolor: theme.palette.error.main,
+            bgcolor: theme.palette.info.light,
           }}
           variant="contained"
         >
-          <AddCircleOutlineOutlined /> Ajouter un doctor
+          <AddCircleOutlineOutlined /> Ajouter un infermier
         </Button>
       </Stack>
 
@@ -102,13 +104,13 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
               <StyledTableCell align="center">Email</StyledTableCell>
               <StyledTableCell align="center">Age</StyledTableCell>
               <StyledTableCell align="center">Adresse</StyledTableCell>
-              <StyledTableCell align="center">Département</StyledTableCell>
+              <StyledTableCell align="center">departement</StyledTableCell>
               <StyledTableCell align="center">Opérations</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {doctorsData.length > 0 ? (
-              doctorsData.map((row) => (
+            {infermiersData.length > 0 ? (
+              infermiersData.map((row) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell align="center">{row.id}</StyledTableCell>
                   <StyledTableCell align="center">{row.nom}</StyledTableCell>
@@ -139,7 +141,7 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
                       />
                     </Button>
 
-                    <Button onClick={() => handleDelete(row.id)}>
+                    <Button onClick={() => handleDeleteInf(row.id)}>
                       <DeleteForeverOutlined
                         sx={{ color: theme.palette.error.light }}
                       />
@@ -161,4 +163,4 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
   );
 };
 
-export default Doctors;
+export default Infermiers;

@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Stack,
-  Typography,
-  useTheme,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import { Button, Stack, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AddCircleOutlineOutlined from "@mui/icons-material/AddCircleOutlineOutlined";
 import DeleteForeverOutlined from "@mui/icons-material/DeleteForeverOutlined";
@@ -44,24 +35,26 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const Doctors = ({ doctorsData, deleteDoctor }) => {
-  const category = "doctors";
+const Patients = ({ patientsData, deletePatient }) => {
+  const category = "patients";
+
   const theme = useTheme();
   const navigate = useNavigate();
-  const [isDelete, setIsDelete] = useState(false);
+  const [isPatientDelete, setIsPatientDelete] = useState(false);
 
-  // Function to handle doctor deletion
-  const handleDelete = (id) => {
-    setIsDelete(true);
+  // Function to handle patient  deletion
+  const handleDeletePat = (ID) => {
+    setIsPatientDelete(true);
 
-    deleteDoctor(id);
+    deletePatient(ID);
   };
 
   useEffect(() => {
-    if (isDelete) {
-      navigate("/doctors"); // Navigate after deletion
+    if (isPatientDelete) {
+      navigate("/patients"); // Navigate after deletion
+      console.log("patient deleted");
     }
-  }, [isDelete, navigate]);
+  }, [isPatientDelete, navigate]);
 
   return (
     <>
@@ -74,18 +67,18 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
           p: "30px",
         }}
       >
-        <Typography variant="h1">Liste des Doctors</Typography>
+        <Typography variant="h1">Liste des Patients</Typography>
         <Button
           onClick={() => navigate(`/add/${category}`)} // Redirect to Add page
           sx={{
             p: "12px 18px",
             display: "flex",
             gap: "12px",
-            bgcolor: theme.palette.error.main,
+            bgcolor: theme.palette.secondary.light,
           }}
           variant="contained"
         >
-          <AddCircleOutlineOutlined /> Ajouter un doctor
+          <AddCircleOutlineOutlined /> Ajouter un Patient
         </Button>
       </Stack>
 
@@ -102,13 +95,16 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
               <StyledTableCell align="center">Email</StyledTableCell>
               <StyledTableCell align="center">Age</StyledTableCell>
               <StyledTableCell align="center">Adresse</StyledTableCell>
-              <StyledTableCell align="center">Département</StyledTableCell>
+              <StyledTableCell align="center">doctor traitant</StyledTableCell>
+              <StyledTableCell align="center">
+                prochaine rendez-vous
+              </StyledTableCell>
               <StyledTableCell align="center">Opérations</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {doctorsData.length > 0 ? (
-              doctorsData.map((row) => (
+            {patientsData.length > 0 ? (
+              patientsData.map((row) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell align="center">{row.id}</StyledTableCell>
                   <StyledTableCell align="center">{row.nom}</StyledTableCell>
@@ -121,7 +117,10 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
                   <StyledTableCell align="center">{row.age}</StyledTableCell>
                   <StyledTableCell align="center">{row.adress}</StyledTableCell>
                   <StyledTableCell align="center">
-                    {row.departement}
+                    {row.doctor_traitant}
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {row.rendezVous}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     <Button
@@ -139,7 +138,7 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
                       />
                     </Button>
 
-                    <Button onClick={() => handleDelete(row.id)}>
+                    <Button onClick={() => handleDeletePat(row.id)}>
                       <DeleteForeverOutlined
                         sx={{ color: theme.palette.error.light }}
                       />
@@ -150,7 +149,7 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
             ) : (
               <StyledTableRow>
                 <StyledTableCell colSpan={10} align="center">
-                  Aucun médecin disponible
+                  Aucun patient disponible
                 </StyledTableCell>
               </StyledTableRow>
             )}
@@ -161,4 +160,4 @@ const Doctors = ({ doctorsData, deleteDoctor }) => {
   );
 };
 
-export default Doctors;
+export default Patients;
