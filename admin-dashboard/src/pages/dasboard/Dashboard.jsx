@@ -1,50 +1,45 @@
-import { Box, Link, Paper, Typography } from "@mui/material";
+// dashboard.jsx
+
+import { Box, Button, Link, Paper, Typography } from "@mui/material";
 import "../../theme";
 import VaccinesOutlined from "@mui/icons-material/VaccinesOutlined";
 import { styled, useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+const Dashboard = ({ doctorsData }) => {
   const theme = useTheme();
+
+  const navigate = useNavigate();
 
   const dashboardData = [
     {
       category: "total doctors",
-      number: 12,
-      path: "/employes",
-      icon: VaccinesOutlined,
+      number: doctorsData.length,
+      path: "/doctors",
+      icon: "/images/doctor.png",
 
       color: theme.palette.info.light,
     },
     {
       category: "total infermiers",
       number: 33,
-      path: "/employes",
-      icon: VaccinesOutlined,
-
+      path: "/infermiers",
+      icon: "/images/infermiere.png",
       color: theme.palette.info.light,
     },
     {
       category: "total departements",
       number: 5,
-      path: "/employes",
-      icon: VaccinesOutlined,
-
-      color: theme.palette.info.light,
-    },
-    {
-      category: "total chambres",
-      number: 40,
-      path: "/employes",
-      icon: VaccinesOutlined,
+      path: "/departements",
+      icon: "/images/departement.png",
 
       color: theme.palette.info.light,
     },
     {
       category: "total lits",
-      number: 200,
-      path: "/employes",
-      icon: VaccinesOutlined,
-
+      number: 40,
+      path: "/lits",
+      icon: "/images/lit.png",
       color: theme.palette.info.light,
     },
   ];
@@ -60,28 +55,31 @@ const Dashboard = () => {
       }}
     >
       {dashboardData.map((item) => (
-        <a
-          style={{ width: "49%", minWidth: "600px", textDecoration: "none" }}
-          href="/employes"
+        <Paper
+          key={item.category}
+          sx={{
+            position: "relative",
+            display: "flex",
+            justifyContent: "space-between",
+            width: "49%",
+            minWidth: "600px",
+            textDecoration: "none",
+            p: "34px",
+            borderRadius: "12px",
+          }}
+          elevation={4}
         >
-          <Paper
-            key={item.category}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              p: "18px",
-              borderRadius: "8px",
-              textAlign: "center",
-              transition: "0.4s",
-              gap: "10px",
-              flexGrow: 1,
-              ":hover": {
-                scale: "1.02",
-              },
-            }}
-            elevation={4}
-          >
-            <item.icon sx={{ fontSize: "50px", mx: "auto", mb: "12px" }} />
+          <Box sx={{ textAlign: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                mx: "auto",
+                width: "90px",
+                height: "90px",
+              }}
+            >
+              <img style={{ width: "100%", height: "100%" }} src={item.icon} />
+            </Box>
             <Typography
               sx={{
                 fontSize: "30px",
@@ -97,8 +95,24 @@ const Dashboard = () => {
             </Typography>
 
             <Typography sx={{ fontSize: "30px" }}>{item.number}</Typography>
-          </Paper>
-        </a>
+          </Box>
+
+          <Button
+            sx={{
+              position: "absolute",
+              bottom: "35px",
+              right: "35px",
+              height: "fit-content",
+              background: theme.palette.success.light,
+            }}
+            variant="contained"
+            onClick={() => {
+              navigate(item.path);
+            }}
+          >
+            plus de detail
+          </Button>
+        </Paper>
       ))}
     </Box>
   );

@@ -1,3 +1,5 @@
+// main.jsx
+
 import React, { useEffect, useState } from "react";
 import {
   createBrowserRouter,
@@ -12,10 +14,10 @@ import Doctors from "./pages/doctors/Doctors";
 import Add from "./pages/doctors/Add";
 import "./index.css";
 import Detail from "./pages/doctors/Detail";
+import Update from "./pages/doctors/Update";
 
 // The root component where doctorsData is managed
 const AppWithRouter = () => {
-  // Initialize doctorsData from localStorage
   const [doctorsData, setDoctorsData] = useState(
     JSON.parse(localStorage.getItem("donneesDoctors")) || []
   );
@@ -31,7 +33,9 @@ const AppWithRouter = () => {
 
   // Function to delete a doctor by ID
   const deleteDoctor = (id) => {
-    const updatedDoctors = doctorsData.filter((doctor) => doctor.id !== id);
+    const updatedDoctors = doctorsData.filter(
+      (doctor) => String(doctor.id) !== String(id)
+    );
     setDoctorsData(updatedDoctors);
     localStorage.setItem("donneesDoctors", JSON.stringify(updatedDoctors)); // Sync with localStorage
   };
@@ -41,11 +45,10 @@ const AppWithRouter = () => {
     localStorage.setItem("donneesDoctors", JSON.stringify(doctorsData));
   }, [doctorsData]);
 
-  // Create routes
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<App />}>
-        <Route index element={<Dashboard />} />
+        <Route index element={<Dashboard doctorsData={doctorsData} />} />
         <Route
           path="doctors"
           element={
@@ -53,7 +56,16 @@ const AppWithRouter = () => {
           }
         />
         <Route path="add" element={<Add addDoctor={addDoctor} />} />
-        <Route path="detail" element={<Detail />} />
+        <Route
+          path="update/:id"
+          element={
+            <Update doctorsData={doctorsData} setDoctorsData={setDoctorsData} />
+          }
+        />
+        <Route
+          path="/detail/:id"
+          element={<Detail doctorsData={doctorsData} />}
+        />
       </Route>
     )
   );
