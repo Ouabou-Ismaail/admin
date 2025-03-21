@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Avatar,
   Divider,
@@ -21,10 +22,10 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MapsHomeWorkOutlined from "@mui/icons-material/MapsHomeWorkOutlined";
 import AccessibleOutlined from "@mui/icons-material/AccessibleOutlined";
 import { HomeOutlined, PeopleOutlined } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 const SlidBar = ({ open, handleDrawerClose }) => {
+  const { id } = useParams(); // Extract the `id` from the URL using useParams
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -93,12 +94,12 @@ const SlidBar = ({ open, handleDrawerClose }) => {
     {
       text: "autres employes",
       icon: <GroupAddOutlined />,
-      path: "/autres_employes",
+      path: "/infermiers",
     },
     {
-      text: "patientes",
+      text: "patients",
       icon: <AccessibleOutlined />,
-      path: "/patientes",
+      path: "/patients",
     },
     {
       text: "departements",
@@ -106,9 +107,9 @@ const SlidBar = ({ open, handleDrawerClose }) => {
       path: "/departements",
     },
     {
-      text: "lits",
+      text: "stocks medicaux",
       icon: <AirlineSeatIndividualSuiteOutlined />,
-      path: "/lits",
+      path: "/stocksMedicaux",
     },
   ];
 
@@ -173,7 +174,15 @@ const SlidBar = ({ open, handleDrawerClose }) => {
                 {
                   minHeight: 48,
                   px: 2.5,
-                  bgcolor: location.pathname === item.path ? "gray" : null,
+                  bgcolor:
+                    location.pathname === item.path ||
+                    location.pathname === `/update/${id}${item.path}` ||
+                    location.pathname === `/detail/${id}${item.path}` ||
+                    location.pathname === `/add${item.path}` ||
+                    /\/update\/\d+\/.*$/.test(item.pathname) // Matches /update/{any number}/{any path}
+                      ? "gray"
+                      : null,
+
                   transition: "0.9s",
                 },
                 open

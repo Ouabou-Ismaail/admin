@@ -6,18 +6,32 @@ import { useParams } from "react-router-dom";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const Detail = ({ doctorsData }) => {
+const Detail = ({ doctorsData, infermiersData, patientsData }) => {
   const navigate = useNavigate();
 
-  const { id } = useParams(); // Obtenir l'ID du docteur depuis l'URL
+  const { id, category } = useParams(); // Obtenir l'ID du docteur depuis l'URL
+
+  //console.log("ID:", id);
+  //console.log("Category:", category);
 
   // Convertir l'ID de string en nombre pour qu'il corresponde à doctor.id
-  const doctorId = Number(parseInt(id, 10));
+  const idClicked = Number(parseInt(id, 10));
 
   // Trouver le docteur par ID
-  const doctor = doctorsData.find(
-    (doctor) => String(doctor.id) === String(doctorId)
-  );
+  let personne;
+  if (category === "doctors") {
+    personne = doctorsData.find(
+      (personne) => String(personne.id) === String(idClicked)
+    );
+  } else if (category === "infermiers") {
+    personne = infermiersData.find(
+      (personne) => String(personne.id) === String(idClicked)
+    );
+  } else if (category === "patients") {
+    personne = patientsData.find(
+      (personne) => String(personne.id) === String(idClicked)
+    );
+  }
 
   return (
     <Paper
@@ -46,8 +60,8 @@ const Detail = ({ doctorsData }) => {
           }}
           onClick={() =>
             setTimeout(() => {
-              navigate("/doctors");
-            }, 700)
+              navigate(`/${category}`);
+            }, 500)
           }
         >
           <ArrowBackOutlined />
@@ -66,7 +80,11 @@ const Detail = ({ doctorsData }) => {
             borderBottom: "1px solid gray",
           }}
         >
-          Plus d'informations sur Dr.{doctor.nom} {doctor.prenom}
+          {category === "doctors"
+            ? `Plus d'informations sur: Dr.${personne.nom} ${personne.prenom}`
+            : category === "infermiers"
+            ? `Plus d'informations sur infermier: ${personne.nom} ${personne.prenom}`
+            : `Plus d'informations sur patient: ${personne.nom} ${personne.prenom}`}
         </Typography>
       </Stack>
 
@@ -79,7 +97,7 @@ const Detail = ({ doctorsData }) => {
           gap: "50px",
         }}
       >
-        {/* Afficher l'image dynamique du docteur */}
+        {/* Afficher l'image dynamique du personne */}
         <Paper
           variant="outlined"
           sx={{
@@ -89,39 +107,383 @@ const Detail = ({ doctorsData }) => {
             overflow: "hidden",
           }}
         >
-          {/* Chemin dynamique pour l'image du docteur */}
-          <img
-            style={{ width: "100%", height: "100%", boxShadow: "12" }}
-            src={`/images/${doctor.image}`} // Chemin d'image dynamique basé sur le docteur
-            alt={`${doctor.nom} ${doctor.prenom}`}
-          />
+          {/* Chemin dynamique pour l'image du personne */}
+          {personne.image !== null ? (
+            <img
+              style={{ width: "100%", height: "100%", boxShadow: "12" }}
+              src={`/images/${personne.image}`} // Chemin d'image dynamique basé sur le personne
+              alt={`${personne.nom} ${personne.prenom}`}
+            />
+          ) : (
+            <h1
+              style={{
+                textAlign: "center",
+                lineHeight: "500px",
+                margin: "auto",
+                letterSpacing: "6px",
+              }}
+            >
+              PROFILE DE{" "}
+              {category.substring(0, category.length - 1).toUpperCase()}
+            </h1>
+          )}
         </Paper>
 
         <Box>
-          <ul
-            style={{
-              listStyle: "disc",
-              gap: "18px",
-              fontSize: "26px",
-              textTransform: "capitalize",
-            }}
-          >
-            <li>Nom: {doctor.nom}</li>
-            <li>Prénom: {doctor.prenom}</li>
-            <li>Age: {doctor.age}</li>
-            <li>Email: {doctor.email}</li>
-            <li>N° téléphone: {doctor.numero_Tele}</li>
-            <li>Adresse: {doctor.adress}</li>
-            <li>Statut: {doctor.statut}</li>
-            <li>Département: {doctor.departement}</li>
-            <li>Salaire: {doctor.salary}</li>
-            <li>
-              CV:
-              <Link href={`./CVs/${doctor.cv}.pdf`} download="cv.pdf">
-                Download CV
-              </Link>
-            </li>
-          </ul>
+          {category !== "patients" ? (
+            <ul
+              style={{
+                listStyle: "disc",
+                fontSize: "26px",
+                textTransform: "capitalize",
+              }}
+            >
+              <li style={{ marginBottom: "-60px", marginTop: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Id:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.id}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Nom:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.nom}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>prenom:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.prenom}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Cin:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.pb}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Age:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.age}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Email:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.email}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>N° de telephone:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>
+                    {personne.numero_Tele}
+                  </h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Adresse:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.adress}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Statut:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.statut}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Département:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>
+                    {personne.departement}
+                  </h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Salaire:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.salary}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                  }}
+                >
+                  <p>Cv:</p>{" "}
+                  {personne.cv ? (
+                    <Link href={`./CVs/${personne.cv}.pdf`} download="cv.pdf">
+                      <h3 style={{ fontFamily: "cursive" }}> Download CV</h3>
+                    </Link>
+                  ) : (
+                    <h3 style={{ fontFamily: "cursive" }}>no cv</h3>
+                  )}
+                </li>
+              </li>
+            </ul>
+          ) : (
+            <ul
+              style={{
+                listStyle: "disc",
+                fontSize: "26px",
+                textTransform: "capitalize",
+              }}
+            >
+              <li style={{ marginBottom: "-60px", marginTop: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Id:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.id}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Nom:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.nom}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>prenom:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.prenom}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Cin:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.pb}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Age:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.age}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Email:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.email}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>N° de telephone:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>
+                    {personne.numero_Tele}
+                  </h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Adresse:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.adress}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Statut:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>{personne.statut}</h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>prochaine rendez-vous:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>
+                    {personne.rendezVous}
+                  </h3>
+                </li>
+              </li>
+
+              <li style={{ marginBottom: "-60px" }}>
+                <li
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    listStyle: "disc",
+                  }}
+                >
+                  <p>Doctor traitant:</p>{" "}
+                  <h3 style={{ fontFamily: "cursive" }}>
+                    Dr.{personne.doctor_traitant}
+                  </h3>
+                </li>
+              </li>
+            </ul>
+          )}
         </Box>
       </Stack>
     </Paper>

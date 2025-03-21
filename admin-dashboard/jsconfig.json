@@ -4,11 +4,6 @@
     "jsx": "react-jsx",
     "baseUrl": "src"
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "build"
-  ]
+  "include": ["src", "login/Login.jsx"],
+  "exclude": ["node_modules", "build"]
 }

@@ -14,7 +14,7 @@ import Toolbar from "@mui/material/Toolbar";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import MuiAppBar from "@mui/material/AppBar";
-import { Delete, Search } from "@mui/icons-material";
+import { Dashboard, Delete, Search } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -24,9 +24,12 @@ import Person2OutlinedIcon from "@mui/icons-material/Person2Outlined";
 import LightModeOutlined from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlined from "@mui/icons-material/DarkModeOutlined";
 import { useTheme } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 
 const TopBar = ({ open, handleDrawerOpen, toggleMode }) => {
   const theme = useTheme();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const drawerWidth = 240;
   const AppBar = styled(MuiAppBar, {
@@ -99,7 +102,14 @@ const TopBar = ({ open, handleDrawerOpen, toggleMode }) => {
       // @ts-ignore
       open={open}
     >
-      <Toolbar>
+      <Toolbar
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <IconButton
           color="inherit"
           aria-label="open drawer"
@@ -125,7 +135,141 @@ const TopBar = ({ open, handleDrawerOpen, toggleMode }) => {
           />
         </Search>
 
-        <Box flexGrow={1} />
+        <Stack
+          direction={"row"}
+          flexGrow={1.8}
+          sx={{ display: "flex", gap: "18px", justifyContent: "center" }}
+        >
+          <Button
+            sx={{
+              color: theme.palette.grey[100],
+              bgcolor:
+                location.pathname === "/" ||
+                location.pathname === `/update/${id}/` ||
+                location.pathname === `/detail/${id}/` ||
+                location.pathname === `/add/` ||
+                /\/update\/\d+\/.*$/.test(
+                  "/" || `/update/${id}/` || `/detail/${id}/` || "/add/"
+                ) // Matches /update/{any number}/{any path}
+                  ? "gray"
+                  : null,
+            }}
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            Dashboard
+          </Button>
+          <Button
+            sx={{
+              color: theme.palette.grey[100],
+              bgcolor:
+                location.pathname === "/doctors" ||
+                location.pathname === `/update/${id}/doctors` ||
+                location.pathname === `/detail/${id}/doctors` ||
+                location.pathname === `/add/doctors` ||
+                /\/update\/\d+\/.*$/.test(
+                  "/doctors" ||
+                    `/update/${id}/doctors` ||
+                    `/detail/${id}/doctors` ||
+                    "/add/doctors"
+                ) // Matches /update/{any number}/{any path}
+                  ? "gray"
+                  : null,
+            }}
+            onClick={() => {
+              navigate("/doctors");
+            }}
+          >
+            Doctors
+          </Button>
+          <Button
+            sx={{
+              color: theme.palette.grey[100],
+              bgcolor:
+                location.pathname === "/infermiers" ||
+                location.pathname === `/update/${id}/indermiers` ||
+                location.pathname === `/detail/${id}/indermiers` ||
+                location.pathname === `/add/indermiers` ||
+                /\/update\/\d+\/.*$/.test(
+                  "/infermiers" ||
+                    `/update/${id}/infermiers` ||
+                    `/detail/${id}/infermiers` ||
+                    "/add/infermiers"
+                ) // Matches /update/{any number}/{any path}
+                  ? "gray"
+                  : null,
+            }}
+            onClick={() => {
+              navigate("/infermiers");
+            }}
+          >
+            Infermiers
+          </Button>
+          <Button
+            sx={{
+              color: theme.palette.grey[100],
+              bgcolor:
+                location.pathname === "/patients" ||
+                location.pathname === `/update/${id}/patients` ||
+                location.pathname === `/detail/${id}/patients` ||
+                location.pathname === `/add/patients` ||
+                /\/update\/\d+\/.*$/.test(
+                  "/patients" ||
+                    `/update/${id}/patients` ||
+                    `/detail/${id}/patients` ||
+                    "/add/patients"
+                ) // Matches /update/{any number}/{any path}
+                  ? "gray"
+                  : null,
+            }}
+            onClick={() => {
+              navigate("/patients");
+            }}
+          >
+            Patients
+          </Button>
+
+          <Button
+            sx={{
+              color: theme.palette.grey[100],
+              bgcolor:
+                location.pathname === "/departements" ||
+                location.pathname === `/update/${id}/departements` ||
+                location.pathname === `/detail/${id}/departements` ||
+                location.pathname === `/add/departements` ||
+                /\/update\/\d+\/.*$/.test(
+                  "/departements" ||
+                    `/update/${id}/departements` ||
+                    `/detail/${id}/departements` ||
+                    "/add/departements"
+                ) // Matches /update/{any number}/{any path}
+                  ? "gray"
+                  : null,
+            }}
+            onClick={() => {
+              navigate("/departements");
+            }}
+          >
+            Departements
+          </Button>
+
+          <Button
+            sx={{
+              color: theme.palette.grey[100],
+              bgcolor:
+                location.pathname === "/stocksMedicaux" ||
+                location.pathname === "/add/stocksMedicaux"
+                  ? "grey"
+                  : null,
+            }}
+            onClick={() => {
+              navigate("/stocksMedicaux");
+            }}
+          >
+            Stocks
+          </Button>
+        </Stack>
 
         <Stack direction={"row"}>
           {theme.palette.mode === "light" ? (
@@ -152,7 +296,16 @@ const TopBar = ({ open, handleDrawerOpen, toggleMode }) => {
             </IconButton>
           )}
 
-          <IconButton color="inherit" aria-label="delete">
+          <IconButton
+            onClick={() => {
+              navigate("/PprofileAdmin");
+            }}
+            color="inherit"
+            aria-label="delete"
+            sx={{
+              bgcolor: location.pathname === `/profileAdmin` ? "gray" : null,
+            }}
+          >
             <Person2OutlinedIcon />
           </IconButton>
 
